@@ -26,3 +26,11 @@ def read_root():
 @app.get("/users")
 def get_users():
     return users
+
+@app.put("/users/{user_id}")
+def update_user(user_id: int, updated_user: dict):
+    for user in users:
+        if user["id"] == user_id:
+            user.update(updated_user)
+            return user
+    return {"error": "User not found"}
