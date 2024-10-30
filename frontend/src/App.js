@@ -5,28 +5,40 @@ function App() {
   const API_URL = 'https://dummyjson.com';
 
   const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState({});
 
-  async function request(url, type, params=null) {
+  const handleUserClick = (user) => {
+    setSelectedUser(user);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedUser((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const request = async (url, type, params=null) => {
     try {
-      const response = await fetch(API_URL + url)
+      const response = await fetch(API_URL + url);
 
       if (!response.ok) {
         throw new Error('API response was not OK');
       }
 
-      const data = await response.json();
-
-      console.log(data.users)
-
-      setUsers(data.users)
-
+      return await response.json();
     } catch (error) {
-      console.error('Error fetching data: ', error)
+      console.error('Error fetching data: ', error);
     }
   }
 
   useEffect(() => {
     request('/users?limit=20', 'GET')
+      .then(data => {
+        setUsers(data.users)
+        setSelectedUser(data.users[0])
+      });
   }, []); // Empty array ensures this runs once on mount
 
 
@@ -41,41 +53,41 @@ function App() {
           <h1 className="text-xl text-center font-bold p-4">Users</h1>
           <ul>
             {users && users.map((user, index) => (
-              <li key={index} className="rounded-lg p-3 m-3 hover:bg-light-blue hover:cursor-pointer">
+              <li key={index} onClick={() => handleUserClick(user)} className="rounded-lg p-3 m-3 hover:bg-light-blue hover:cursor-pointer">
                 <span className="font-bold">#{user.id}</span> {user.firstName} {user.lastName}
               </li>
             ))}
           </ul>
         </div>
         <div className="px-5 col-span-2">
-          <h1 className="text-xl text-center font-bold p-4">John Doe</h1>
-            <div className="grid grid-cols-4 gap-5">
+          <h1 className="text-xl text-center font-bold p-4">{selectedUser.firstName} {selectedUser.lastName}</h1>
+            <div className="grid grid-cols-4 gap-5 mb-5">
               <div className="col-span-1 p-5 rounded-lg border border-blue bg-blue font-bold text-right">Id:</div>
-              <input type="text" className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value="#1" autoFocus/><br />
+              <div className="col-span-3 p-5 border border-blue rounded-lg bg-blue">#{selectedUser.id}</div>
             </div>
             <div className="grid grid-cols-4 gap-5">
               <div className="col-span-1 p-5 rounded-lg border border-blue bg-blue font-bold text-right">First name:</div>
-              <input type="text" className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value="John"/><br />
+              <input type="text" onChange={handleChange} className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value={selectedUser.firstName} autoFocus /><br />
             </div>
             <div className="grid grid-cols-4 gap-5">
               <div className="col-span-1 p-5 rounded-lg border border-blue bg-blue font-bold text-right">Last name:</div>
-              <input type="text" className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value="Doe"/><br />
+            <input type="text" onChange={handleChange} className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value={selectedUser.lastName} /><br />
             </div>
             <div className="grid grid-cols-4 gap-5">
               <div className="col-span-1 p-5 rounded-lg border border-blue bg-blue font-bold text-right">Age:</div>
-              <input type="text" className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value="19"/><br />
+            <input type="text" onChange={handleChange} className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value={selectedUser.age} /><br />
             </div>
             <div className="grid grid-cols-4 gap-5">
               <div className="col-span-1 p-5 rounded-lg border border-blue bg-blue font-bold text-right">Gender:</div>
-              <input type="text" className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value="Male"/><br />
+            <input type="text" onChange={handleChange} className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value={selectedUser.gender} /><br />
             </div>
             <div className="grid grid-cols-4 gap-5">
               <div className="col-span-1 p-5 rounded-lg border border-blue bg-blue font-bold text-right">Email:</div>
-              <input type="text" className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value="test@mail.com"/><br />
+            <input type="text" onChange={handleChange} className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value={selectedUser.email} /><br />
             </div>
             <div className="grid grid-cols-4 gap-5">
               <div className="col-span-1 p-5 rounded-lg border border-blue bg-blue font-bold text-right">Phone:</div>
-              <input type="text" className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value="123-456-7890"/><br />
+            <input type="text" onChange={handleChange} className="col-span-3 p-5 border border-blue rounded-lg bg-light-blue" value={selectedUser.phone} /><br />
             </div>
           <button className="bg-orange hover:bg-dark-orange text-white p-5 rounded-lg w-full">Edit user</button>
         </div>
