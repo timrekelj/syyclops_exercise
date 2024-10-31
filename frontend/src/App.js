@@ -21,6 +21,9 @@ function App() {
 
   const handleUpdate = () => {
     request(`/users/${selectedUser.id}`, 'PUT', selectedUser)
+    request('/users', 'GET').then(data => {
+      setUsers([ ...data.users ])
+    });
   }
 
   const request = async (url, type, params=null) => {
@@ -73,7 +76,7 @@ function App() {
           <ul>
             {users && users.map((user, index) => (
               <li key={index} onClick={() => handleUserClick(user)} className="rounded-lg p-3 m-3 hover:bg-light-blue hover:cursor-pointer">
-                <span className="font-bold">#{user.id}</span> {user.firstName} {user.lastName}
+                <span className="font-bold">#{user.id}</span> {user.firstName || ''} {user.lastName || ''}
               </li>
             ))}
           </ul>
