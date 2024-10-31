@@ -2,7 +2,7 @@ import { ReactComponent as Logo} from './images/logo.svg';
 import { useEffect, useState } from 'react';
 
 function App() {
-  const API_URL = 'https://dummyjson.com';
+  const API_URL = 'http://127.0.0.1:8000';
 
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState({});
@@ -56,7 +56,7 @@ function App() {
   }
 
   useEffect(() => {
-    request('/users?limit=20', 'GET')
+    request('/users', 'GET')
       .then(data => {
         setUsers(data.users)
         setSelectedUser(data.users[0])
